@@ -1,36 +1,28 @@
-
 const http = require('http').createServer();
 
 const io = require('socket.io')(http, {
-    cors: { origin: "*" }
+    cors: {origin: "*"}
 });
+
 
 io.on('connection', (socket) => {
     console.log('a user connected');
 
-    socket.on('message', (message) =>     {
+    const count = io.engine.clientsCount;
+    var messag = {
+        "msg": `Connection Established, Users connected: ${count}`,
+        "timeStamp": "",
+        "username": "SOCKET-IO"
+    }
+
+    io.emit('new_message',messag)
+    
+
+    socket.on('new_message' , (message) => {
         console.log(message);
-        io.emit('message', `${socket.id.substr(0,2)} said ${message}` );   
-    });
-});
-
-http.listen(8080, () => console.log('listening on http://localhost:8080') );
+        io.emit('new_message', message);
+    })
+})
 
 
-// Regular Websockets
-
-// const WebSocket = require('ws')
-// const server = new WebSocket.Server({ port: '8080' })
-
-// server.on('connection', socket => { 
-
-//   socket.on('message', message => {
-
-//     socket.send(`Roger that! ${message}`);
-
-//   });
-
-// });
-
-
- 
+http.listen(3000, ()=> console.log('listening on http://localhost:3000'));
